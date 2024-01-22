@@ -1,0 +1,178 @@
+---
+title: "Tarea 1"
+author: "Sara Luz e Iván"
+format: pdf
+editor: visual
+---
+
+Trabaja con tu equipo en los siguientes ejercicios:
+
+# Tarea 1.Busca todos los restaurantes de las colonias de la Zona Condesa (Condesa, Hipódromo e Hipódromo Condesa) utilizando dos fuentes: INEGI DENUE y OSM.
+
+Nota: puedes descargar o armar la BD utilizando un editor de texto o Excel (no utilices ninguna otra); si te sirve, puedes buscar coodenadas utilizando Google Maps.
+
+### Descarga de la base de datos
+
+Se utilizaron las siguientes dos ligas:
+
+- [DENUE CDMX 2023/11](https://www.inegi.org.mx/img/ico/ico_csv.png)
+- Open Street Maps (Se bajo un geojson y se convirtió a csv)
+
+### Carga de datos
+
+```{r include=FALSE}
+#renv::install("readr")
+#renv::install("dplyr")
+library(readr)
+library(dplyr)
+```
+
+
+```{r}
+datos_denue <- read.csv('./Datos/denue_09_csv/conjunto_de_datos/denue_inegi_09_.csv')
+glimpse(datos_denue)
+```
+
+```{r}
+datos_osm <- read.csv('./Datos/mygeodata/export.csv')
+glimpse(datos_osm)
+```
+
+
+
+# Tarea 2.Responde las siguientes preguntas utilizando únicamente R o Excel. Explica tu razonamiento.
+
+* ¿Cuántos restaurantes encontraste en cada fuente?
+
+Para los datos de DENUE, se realizó el filtro de colonia por código postal:
+- Condesa(06140), 
+- Hipódromo(06100),
+- Hipódromo Condesa(06170)
+
+Y filtro por código de actividad:
+- 722330 Servicios de preparación de alimentos en unidades móviles 
+- 722412 Bares, cantinas y similares
+- 72251 Servicios de preparación de alimentos y bebidas alcohólicas y no alcohólicas
+
+```{r include= FALSE}
+#renv::install("stringr")
+library(stringr)
+```
+
+
+```{r}
+
+denue1 <- datos_denue %>% 
+  select(cod_postal, codigo_act,nombre_act, longitud, longitud) %>% 
+  filter(cod_postal==06140 | cod_postal==06100 | cod_postal==06170) %>% 
+  filter(str_detect(codigo_act, "^722330") | str_detect(codigo_act, "^722412") | str_detect(codigo_act, "^72251")) 
+```
+
+```{r}
+denue1 %>% 
+  summarise(tot_rest = n())
+```
+ 
+```{r}
+datos_osm %>% summarise(n())
+```
+
+Hay 517 restaurantes en la base de DENUE y 186 en la de OSM.
+
+* ¿Qué campos puedes conocer sobre cada restaurante, en cada fuente?
+
+En el denue:
+```{r}
+colnames(datos_denue)
+```
+
+En OSM:
+```{r}
+colnames(datos_osm)
+```
+
+
+* ¿Cuántas taquerías encontraste en cada fuente?
+
+En el DENUE:
+```{r}
+denue1 %>% 
+  select(nombre_act) %>% 
+  filter(str_detect(nombre_act, "taco") |
+           str_detect(nombre_act, "taque")) %>% 
+  summarise(n())
+```
+
+
+En OSM:
+```{r}
+datos_osm %>% 
+  select(name) %>% 
+  filter(str_detect(name, regex("taco", ignore_case = TRUE)) | 
+           str_detect(name, regex("taque", ignore_case = TRUE)) | 
+           str_detect(name, regex("tako", ignore_case = TRUE))) #%>% 
+#  summarise(n())
+```
+
+
+
+* Determina la dirección exacta (en texto, no coordenadas) de cada lugar, según la fuente.
+(calle + número + colonia + código postal + alcaldía + estado).
+
+En el DENUE:
+
+```{r}
+denue2 <- datos_denue %>% 
+  select(tipo_vial,  nom_vial,
+         tipo_v_e_1, nom_v_e_1,
+         tipo_v_e_2, nom_v_e_2,  
+         tipo_v_e_3, nom_v_e_3,  
+         numero_ext, letra_ext,
+         edificio, edificio_e,
+         numero_int, letra_int, 
+         tipo_asent, nomb_asent, 
+         cod_postal,
+         municipio, entidad)
+glimpse(denue2)
+```
+
+En el OSM:
+```{r}
+osm1 <- datos_osm %>% 
+  select(addr.city,
+  addr.housenumber,
+  addr.street,
+  addr.country,
+  addr.postcode,
+  addr.housename)
+glimpse(osm1)
+```
+
+
+* Si tuvieras que elegir entre una de las fuentes para hacer un estudio de mercado, ¿cuál escogerías, por qué?
+
+DENUE, porque está más completo, tiene más información, y porque en el de OSM carecemos de la pericia para hacer un polígono de sólo las tres colonias mencionadas, en este caso se hizo con un rectángulo que incluía a las colonias y un poco de las zonas aledañas.
+
+* ¿Podrías determinar en qué AGEB se encuentra cada restaurante?
+
+Los códigos de los AGEBs para las zonas urbanas se determinan como: EEMMMLLLLAAA-ANNN
+- 2 dígitos de estado (EE)
+- 3 de municipio (MMM)
+- 4 para localidad (LLLL)
+- AGEB 3 dígitos un guión y un dígito verificador (AAA-A)
+- 3 para manzana (NNN)
+
+Salvo por la parte de AGEB (AAA-A), se podría construir el código sólo para los retaurantes de la base del DENUE que está más completa.
+
+# Tarea 3. Por favor, revisa el siguiente material:
+
+* Usos y técnicas para análisis de datos: Lee la nota de Forbes sobre limpieza de datos, [liga](https://www.forbes.com/sites/gilpress/2016/03/23/data-preparation-most-time-consuming-least-enjoyable-data-science-task-survey-says/?sh=7de276136f63).
+
+* Ética y privacidad - Cambridge Analytica: [liga1](https://www.youtube.com/watch?v=mrnXv-g4yKU) y [liga2](https://www.youtube.com/watch?v=mpbeOCKZFfQ).
+
+
+Entrega en el folder de Equipo:
+
+* Arma un documento de Word con las respuestas y explicación de la sección 1.
+* Sube la BD y los códigos o archivos que utilizaste para responder las preguntas 1 y 2.
+* De la sección 3: no deben entregar nada, pero sí deben revisar esto. En las siguientes sesiones asumiré que todos lo revisaron. Si hay alguna duda, podemos platicar la siguiente sesión o me pueden escribir al correo.
