@@ -4,7 +4,9 @@ author: "Sara Luz e Iván"
 format: html
 editor: visual
 ---
+
 #### Carga de Bibliotecas
+
 ```{r message=FALSE}
 library(foreign)
 library(tidyverse)
@@ -27,7 +29,7 @@ library(readr)
 
 Se utilizaron las siguientes ligas:
 
-- [Censo 2020 CDMX](https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/marcogeo/889463807469/09_ciudaddemexico.zip)
+-   [Censo 2020 CDMX](https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/marcogeo/889463807469/09_ciudaddemexico.zip)
 
 -   [DENUE CDMX 2020/11](https://www.inegi.org.mx/img/ico/ico_csv.png)
 
@@ -37,8 +39,8 @@ Se utilizaron las siguientes ligas:
 mzn_censo = readOGR("./Datos/09_ciudaddemexico/conjunto_de_datos/09m.shp")
 ```
 
-- Son 66,789 manzanas
-- con 8 variables
+-   Son 66,789 manzanas
+-   con 8 variables
 
 #### Análisis de los datos
 
@@ -50,55 +52,53 @@ mzn_censo@data %>% head() %>% kable() %>% kable_paper()
 mzn_censo@proj4string
 ```
 
-
-
 ```{r}
-mzn_censo@polygons[[1]]@Polygons[[1]]@coords %>% head()
+mzn_censo@polygons[[2]]@Polygons[[1]]@coords %>% head()
 ```
-
 
 Los datos se enuentran en cooordenadas un sistema de coordenadas proyectadas
 
 ```{r}
 plot(mzn_censo, main="Colonias CDMX")
 ```
-- Lo cambiamos a Latitud y Longitud
+
+-   Lo cambiamos a Latitud y Longitud
 
 ```{r warning=FALSE}
-###############FALTA UN FOR
+m = seq(1,length(mzn_censo))
+manzanas <- tibble(mzn= numeric(),lon= numeric(),lat= numeric())
 
-# Agrupamos las coordenadas a convertir en un data.frame
-x<-mzn_censo@polygons[[1]]@Polygons[[1]]@coords[,1]#longitud
-y<-mzn_censo@polygons[[1]]@Polygons[[1]]@coords[,2]#latitud
-d <- data.frame(lon=x, lat=y)
-coordinates(d) <- c("lon", "lat")
+for (i in m) {
+  
+# Agrupamos las coordenadas de la i-ésima manzana a convertir en un data.frame
+  x<-mzn_censo@polygons[[i]]@Polygons[[1]]@coords[,1]#longitud
+  y<-mzn_censo@polygons[[i]]@Polygons[[1]]@coords[,2]#latitud
+  d <- data.frame(lon=x, lat=y)
+  coordinates(d) <- c("lon", "lat")
 
 #Escribimos la proyeccion actual de nuestro sistema de coordenadas geográficas
-proj4string(d) <- CRS("+proj=lcc +lat_1=17.5 +lat_2=29.5 +lat_0=12 +lon_0=-102 +x_0=2500000 +y_0=0 +ellps=GRS80 +units=m +no_defs") 
+  proj4string(d) <- CRS("+proj=lcc +lat_1=17.5 +lat_2=29.5 +lat_0=12 +lon_0=-102 +x_0=2500000 +y_0=0 +ellps=GRS80 +units=m +no_defs") 
 #En CRS.new escribimos la proyección a la que queremos convertir nuestros datos
-CRS.new <- CRS("+proj=longlat +datum=WGS84 +no_defs")
-
+  CRS.new <- CRS("+proj=longlat +datum=WGS84 +no_defs")  
+  
 #Transformamos el sistema
-d_proyectado <- spTransform(d, CRS.new)
+  d_proyectado <- spTransform(d, CRS.new)
 
-#Y convertirmos los resultados es un nuevo data.frame
-D<-data.frame(d_proyectado)#conviértelo a data frame para que los veas como tabla normal
+#Convertirmos los resultados es un nuevo data.frame
+  D<-data.frame(mzn=i, d_proyectado)#conviértelo a data frame para que los veas como tabla normal
+  manzanas <- manzanas %>% add_row(D)
+}
 
-
-head(D) %>% kable() %>% kable_paper()
+#head(D) %>% kable() %>% kable_paper()
 ```
-
-
 
 #### Cálculo del centroide
+
 ```{r}
-#Calculamos
-centroides <- D %>% mutate(centroide_X = mean(lon), 
-             centroide_Y = mean(lat))
-
-centroides %>% head() %>% kable() %>% kable_paper()
+centroide <- manzanas %>% 
+  group_by(mzn) %>% 
+  summarise(c_lon=mean(lon), c_lat=mean(lat))
 ```
-
 
 ## 2. Encuentra la ubicación de todos los OXXO de la CDMX, asegúrate de filtrar correctamente los datos para evitar falsos positivos.
 
@@ -110,7 +110,8 @@ datos_denue <- read.csv('./Datos/denue_09_1120_csv/denue_09_csv/conjunto_de_dato
 
 #### Limpieza de datos
 
-- Primero filtramos todos aquellos que puedan ser un OXXO pero tengan otra razón social
+-   Primero filtramos todos aquellos que puedan ser un OXXO pero tengan otra razón social
+
 ```{r}
 datos_denue %>% select(nom_estab, raz_social, latitud, longitud) %>% 
   filter(str_detect(nom_estab, regex("oxxo", ignore_case = TRUE)) | 
@@ -118,13 +119,12 @@ datos_denue %>% select(nom_estab, raz_social, latitud, longitud) %>%
   filter(raz_social!="CADENA COMERCIAL OXXO SA DE CV") %>% head() %>% kable() %>% kable_paper()
 ```
 
-- Usamos Google Maps para revisar las más probables de ser un OXXO, y únicamente una resultó serlo:
+-   Usamos Google Maps para revisar las más probables de ser un OXXO, y únicamente una resultó serlo:
 
-![screenshot1](./Screenshot1_tarea2.png)
-![screenshot1](./Screenshot2_tarea2.png)
-![screenshot1](./Screenshot3_tarea2.png)
+![screenshot1](./Screenshot1_tarea2.png) ![screenshot1](./Screenshot2_tarea2.png) ![screenshot1](./Screenshot3_tarea2.png)
 
-- Con lo cual los datos quedarían como:
+-   Con lo cual los datos quedarían como:
+
 ```{r}
 datos_denue <- datos_denue %>% select(nom_estab, raz_social, latitud, longitud) %>% 
   filter(nom_estab == "CADENA COMERCIAL OXXO" | raz_social=="CADENA COMERCIAL OXXO SA DE CV") 
@@ -143,21 +143,16 @@ D[1,1]
 D[1,2]
 ```
 
-
 ## 4. Determina cuál es el OXXO que es más cercano a más manzanas de la CDMX.
 
 ## 5. ¿Cuál es la distancia euclidiana entre el OXXO del punto 4 y este en la Paz?
 
 ## 6. ¿Cuál es la distancia de Haversine entre el OXXO del punto 4 y este en la Paz?
 
-
 Escribe una rutina de R para cada pregunta. Mantén el orden en tu código y comenta todo.
 
 Colócalo en el Folder de equipo a más tardar, **miércoles 31 de febrero 11 am.**
 
-
 ### Puntuación Extra:
 
-Si tuvieras las coordenadas de los centroides de las manzanas y las de los OXXO en UTM Mercator, ¿Cómo podrías ahorrar
-operaciones para responder las preguntas anteriores? Diseña un planteamiento teórico - geométrico para la pregunta anterior,
-considera el espacio geométrico en el que están los puntos en UTM y sus propiedades.
+Si tuvieras las coordenadas de los centroides de las manzanas y las de los OXXO en UTM Mercator, ¿Cómo podrías ahorrar operaciones para responder las preguntas anteriores? Diseña un planteamiento teórico - geométrico para la pregunta anterior, considera el espacio geométrico en el que están los puntos en UTM y sus propiedades.

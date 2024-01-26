@@ -290,14 +290,15 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mzn_censo<span class="sc">@</span>polygons[[<span class="dv">1</span>]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mzn_censo<span class="sc">@</span>polygons[[<span class="dv">2</span>]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]     [,2]
-[1,] 2790204 820779.2
-[2,] 2790126 820714.5
-[3,] 2790105 820742.4
-[4,] 2790178 820799.8
-[5,] 2790204 820779.2</code></pre>
+[1,] 2791388 821465.2
+[2,] 2791376 821459.9
+[3,] 2791365 821457.5
+[4,] 2791361 821457.4
+[5,] 2791360 821467.2
+[6,] 2791369 821490.3</code></pre>
 </div>
 </div>
 <p>Los datos se enuentran en cooordenadas un sistema de coordenadas proyectadas</p>
@@ -311,115 +312,39 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 <li>Lo cambiamos a Latitud y Longitud</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Agrupamos las coordenadas a convertir en un data.frame</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>x<span class="ot">&lt;-</span>mzn_censo<span class="sc">@</span>polygons[[<span class="dv">1</span>]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords[,<span class="dv">1</span>]<span class="co">#longitud</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span>mzn_censo<span class="sc">@</span>polygons[[<span class="dv">1</span>]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords[,<span class="dv">2</span>]<span class="co">#latitud</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lon=</span>x, <span class="at">lat=</span>y)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(d) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Escribimos la proyeccion actual de nuestro sistema de coordenadas geográficas</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(d) <span class="ot">&lt;-</span> <span class="fu">CRS</span>(<span class="st">"+proj=lcc +lat_1=17.5 +lat_2=29.5 +lat_0=12 +lon_0=-102 +x_0=2500000 +y_0=0 +ellps=GRS80 +units=m +no_defs"</span>) </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#En CRS.new escribimos la proyección a la que queremos convertir nuestros datos</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>CRS.new <span class="ot">&lt;-</span> <span class="fu">CRS</span>(<span class="st">"+proj=longlat +datum=WGS84 +no_defs"</span>)</span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(mzn_censo))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>manzanas <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">mzn=</span> <span class="fu">numeric</span>(),<span class="at">lon=</span> <span class="fu">numeric</span>(),<span class="at">lat=</span> <span class="fu">numeric</span>())</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> m) {</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Agrupamos las coordenadas de la i-ésima manzana a convertir en un data.frame</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">&lt;-</span>mzn_censo<span class="sc">@</span>polygons[[i]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords[,<span class="dv">1</span>]<span class="co">#longitud</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  y<span class="ot">&lt;-</span>mzn_censo<span class="sc">@</span>polygons[[i]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords[,<span class="dv">2</span>]<span class="co">#latitud</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lon=</span>x, <span class="at">lat=</span>y)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coordinates</span>(d) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>)</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Transformamos el sistema</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>d_proyectado <span class="ot">&lt;-</span> <span class="fu">spTransform</span>(d, CRS.new)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Y convertirmos los resultados es un nuevo data.frame</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>D<span class="ot">&lt;-</span><span class="fu">data.frame</span>(d_proyectado)<span class="co">#conviértelo a data frame para que los veas como tabla normal</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(D) <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">lon</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">lat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">-99.22982</td>
-<td style="text-align: right;">19.35939</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">-99.23058</td>
-<td style="text-align: right;">19.35882</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">-99.23077</td>
-<td style="text-align: right;">19.35907</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">-99.23006</td>
-<td style="text-align: right;">19.35958</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">-99.22982</td>
-<td style="text-align: right;">19.35939</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Escribimos la proyeccion actual de nuestro sistema de coordenadas geográficas</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">proj4string</span>(d) <span class="ot">&lt;-</span> <span class="fu">CRS</span>(<span class="st">"+proj=lcc +lat_1=17.5 +lat_2=29.5 +lat_0=12 +lon_0=-102 +x_0=2500000 +y_0=0 +ellps=GRS80 +units=m +no_defs"</span>) </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#En CRS.new escribimos la proyección a la que queremos convertir nuestros datos</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  CRS.new <span class="ot">&lt;-</span> <span class="fu">CRS</span>(<span class="st">"+proj=longlat +datum=WGS84 +no_defs"</span>)  </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#Transformamos el sistema</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  d_proyectado <span class="ot">&lt;-</span> <span class="fu">spTransform</span>(d, CRS.new)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#Convertirmos los resultados es un nuevo data.frame</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  D<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">mzn=</span>i, d_proyectado)<span class="co">#conviértelo a data frame para que los veas como tabla normal</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  manzanas <span class="ot">&lt;-</span> manzanas <span class="sc">%&gt;%</span> <span class="fu">add_row</span>(D)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#head(D) %&gt;% kable() %&gt;% kable_paper()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="cálculo-del-centroide" class="level4">
 <h4 class="anchored" data-anchor-id="cálculo-del-centroide">Cálculo del centroide</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Calculamos</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>centroides <span class="ot">&lt;-</span> D <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">centroide_X =</span> <span class="fu">mean</span>(lon), </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">centroide_Y =</span> <span class="fu">mean</span>(lat))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>centroides <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">lon</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">lat</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">centroide_X</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">centroide_Y</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">-99.22982</td>
-<td style="text-align: right;">19.35939</td>
-<td style="text-align: right;">-99.23021</td>
-<td style="text-align: right;">19.35925</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">-99.23058</td>
-<td style="text-align: right;">19.35882</td>
-<td style="text-align: right;">-99.23021</td>
-<td style="text-align: right;">19.35925</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">-99.23077</td>
-<td style="text-align: right;">19.35907</td>
-<td style="text-align: right;">-99.23021</td>
-<td style="text-align: right;">19.35925</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">-99.23006</td>
-<td style="text-align: right;">19.35958</td>
-<td style="text-align: right;">-99.23021</td>
-<td style="text-align: right;">19.35925</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">-99.22982</td>
-<td style="text-align: right;">19.35939</td>
-<td style="text-align: right;">-99.23021</td>
-<td style="text-align: right;">19.35925</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>centroide <span class="ot">&lt;-</span> manzanas <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mzn) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">c_lon=</span><span class="fu">mean</span>(lon), <span class="at">c_lat=</span><span class="fu">mean</span>(lat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -581,11 +506,11 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>D[<span class="dv">1</span>,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -99.22982</code></pre>
+<pre><code>[1] 66789</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>D[<span class="dv">1</span>,<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 19.35939</code></pre>
+<pre><code>[1] -99.10789</code></pre>
 </div>
 </div>
 </section>
