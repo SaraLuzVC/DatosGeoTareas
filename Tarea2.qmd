@@ -64,7 +64,7 @@ plot(mzn_censo, main="Colonias CDMX")
 
 -   Lo cambiamos a Latitud y Longitud
 
-```{r warning=FALSE}
+```{r warning=FALSE, cache=TRUE}
 m = seq(1,length(mzn_censo))
 manzanas <- tibble(mzn= numeric(),lon= numeric(),lat= numeric())
 
@@ -100,6 +100,13 @@ centroide <- manzanas %>%
   summarise(c_lon=mean(lon), c_lat=mean(lat))
 ```
 
+-Añadimos clave de la manzana
+```{r}
+clave_mzn <- mzn_censo@data %>% select(CVE_MZA)
+centroide <- centroide %>% add_column(clave_mzn)
+head(centroide) %>% kable() %>% kable_paper()
+```
+
 ## 2. Encuentra la ubicación de todos los OXXO de la CDMX, asegúrate de filtrar correctamente los datos para evitar falsos positivos.
 
 #### Carga de Datos
@@ -126,28 +133,65 @@ datos_denue %>% select(nom_estab, raz_social, latitud, longitud) %>%
 -   Con lo cual los datos quedarían como:
 
 ```{r}
-datos_denue <- datos_denue %>% select(nom_estab, raz_social, latitud, longitud) %>% 
-  filter(nom_estab == "CADENA COMERCIAL OXXO" | raz_social=="CADENA COMERCIAL OXXO SA DE CV") 
+datos_denue <- datos_denue %>% select(id, nom_estab, raz_social, latitud, longitud, manzana) %>% 
+  filter(nom_estab == "CADENA COMERCIAL OXXO" | raz_social=="CADENA COMERCIAL OXXO SA DE CV") %>% 
+  tibble() %>% 
+  select(id, latitud, longitud, manzana)
 datos_denue %>% 
   head() %>% kable() %>% kable_paper()
 ```
 
 ## 3. Determina cuál es OXXO más cercano al Centroide de cada manzana de la CDMX.
 
+- Primero hacemos una prueba
 ```{r}
-for (x in 1:10) {
-  print(x)
-}
-
-D[1,1]
-D[1,2]
+distHaversine(c(datos_denue[[1,3]],datos_denue[[1,2]]),c(centroide[[1,2]],centroide[[1,3]]),r=6378137)
 ```
+
+- Posteriormente hacemos un ciclo FOR
+
+```{r cache=TRUE}
+n = seq(1,nrow(datos_denue))
+
+distancias <- tibble(mzn= numeric(),c_lon= numeric(), c_lat= numeric(), CVE_MZA=character(), 
+                     oxxo=integer(), id=integer(), latitud= numeric(), longitud= numeric(), manzana=integer(), 
+                     distancia=numeric())
+
+for (i in m) {
+  for (j in n) {
+    d <- distHaversine(c(datos_denue[[j,3]],datos_denue[[j,2]]),c(centroide[[i,2]],centroide[[i,3]]),r=6378137)
+    D <- data.frame(slice(centroide, i), j, slice(datos_denue,j), d)
+    distancias <- distancias %>% rbind(tibble(D))
+  }
+  
+}
+```
+
+
 
 ## 4. Determina cuál es el OXXO que es más cercano a más manzanas de la CDMX.
 
+```{r}
+distancias %>% group_by(oxxo) %>% 
+  summarise(dist_tot = sum(distancia)) %>% 
+  order_by(dist_tot) %>% 
+  head()
+```
+
+
 ## 5. ¿Cuál es la distancia euclidiana entre el OXXO del punto 4 y este en la Paz?
 
+```{r}
+
+```
+
+
 ## 6. ¿Cuál es la distancia de Haversine entre el OXXO del punto 4 y este en la Paz?
+
+```{r}
+
+```
+
 
 Escribe una rutina de R para cada pregunta. Mantén el orden en tu código y comenta todo.
 
