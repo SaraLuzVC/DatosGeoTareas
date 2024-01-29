@@ -3,6 +3,8 @@ title: "Tarea 2"
 author: "Sara Luz e Iván"
 format: html
 editor: visual
+execute:
+  cache: true
 ---
 
 #### Carga de Bibliotecas
@@ -150,21 +152,25 @@ distHaversine(c(datos_denue[[1,3]],datos_denue[[1,2]]),c(centroide[[1,2]],centro
 
 - Posteriormente hacemos un ciclo FOR
 
+OJO hubo que detener este código despés de tres días de estarlo corriendo
+
 ```{r cache=TRUE}
-n = seq(1,nrow(datos_denue))
+# n = seq(1,nrow(datos_denue))
+# 
+# distancias <- tibble(mzn= numeric(),c_lon= numeric(), c_lat= numeric(), CVE_MZA=character(), 
+#                      oxxo=integer(), id=integer(), latitud= numeric(), longitud= numeric(), manzana=integer(), 
+#                      distancia=numeric())
+# 
+# for (i in m) {
+#   for (j in n) {
+#     d <- distHaversine(c(datos_denue[[j,3]],datos_denue[[j,2]]),c(centroide[[i,2]],centroide[[i,3]]),r=6378137)
+#     D <- data.frame(slice(centroide, i), j, slice(datos_denue,j), d)
+#     distancias <- distancias %>% rbind(tibble(D))
+#   }
+#   
+# }
 
-distancias <- tibble(mzn= numeric(),c_lon= numeric(), c_lat= numeric(), CVE_MZA=character(), 
-                     oxxo=integer(), id=integer(), latitud= numeric(), longitud= numeric(), manzana=integer(), 
-                     distancia=numeric())
-
-for (i in m) {
-  for (j in n) {
-    d <- distHaversine(c(datos_denue[[j,3]],datos_denue[[j,2]]),c(centroide[[i,2]],centroide[[i,3]]),r=6378137)
-    D <- data.frame(slice(centroide, i), j, slice(datos_denue,j), d)
-    distancias <- distancias %>% rbind(tibble(D))
-  }
-  
-}
+distancias = read_csv("./Datos/distancias_miau.csv",show_col_types = FALSE)
 ```
 
 
@@ -172,24 +178,64 @@ for (i in m) {
 ## 4. Determina cuál es el OXXO que es más cercano a más manzanas de la CDMX.
 
 ```{r}
-distancias %>% group_by(oxxo) %>% 
-  summarise(dist_tot = sum(distancia)) %>% 
-  order_by(dist_tot) %>% 
+distancias %>% group_by(j) %>% 
+  summarise(dist_tot = sum(d)) %>% 
+  arrange(dist_tot) %>%
   head()
+```
+
+```{r}
+distancias %>% filter(j==352)
 ```
 
 
 ## 5. ¿Cuál es la distancia euclidiana entre el OXXO del punto 4 y este en la Paz?
 
-```{r}
+- Primero pasamos las coordenadas a UTM
 
+```{r}
+# convertimos a coordenadas espaciales
+mydf <- structure(list(longitude = c(-99.22285, -110.3136462), latitude = c(19.36876, 24.1421659)), 
+                  .Names = c("longitude", "latitude"), class = "data.frame", row.names = c(NA, -2L))
+
+xy <- mydf[,c(1,2)]
+
+spdf <- SpatialPointsDataFrame(coords = xy, data = mydf,
+                               proj4string = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+
+# Utilizamos las coordenadas geograficas y las proyectamos
+d <- data.frame(lon=spdf$longitude, lat=spdf$latitude)
+coordinates(d) <- c("lon", "lat")
+
+# Estan en lat,lon entonces declaramos la proyeccion usual
+sputm <- SpatialPoints(d, proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+# Ya sabemos que todos los puntos estan en la CDMX y por lo tanto, pertenecen a la UTM Zone 14
+proyeccion<-CRS("+proj=utm +zone=14 +datum=WGS84 +units=m +no_defs ") 
+
+# Transformamos los datos
+UTM <- spTransform(sputm, proyeccion) %>% 
+  data.frame()
+colnames(UTM) <- c("lon_UTM","lat_UTM")
+
+pto1 <- c(UTM$lon_UTM[1],UTM$lat_UTM[1])
+pto2 <- c(UTM$lon_UTM[2],UTM$lat_UTM[2])
+```
+
+- Calculamos distancia euclidiana
+
+```{r}
+#Formula
+euclidean <- function(a, b) sqrt(sum((a - b)^2))
+
+euclidean(pto1,pto2)
 ```
 
 
 ## 6. ¿Cuál es la distancia de Haversine entre el OXXO del punto 4 y este en la Paz?
 
 ```{r}
-
+distHaversine(c(spdf$longitude[1],spdf$latitude[1]), c(spdf$longitude[2],spdf$latitude[2]), r=6378137)
 ```
 
 

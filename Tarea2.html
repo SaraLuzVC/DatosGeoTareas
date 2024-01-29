@@ -106,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="carga-de-bibliotecas" class="level4">
 <h4 class="anchored" data-anchor-id="carga-de-bibliotecas">Carga de Bibliotecas</h4>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-1_748a06968596bb50fbefefa8e46dfc3b">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
@@ -135,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="carga-de-datos" class="level4">
 <h4 class="anchored" data-anchor-id="carga-de-datos">Carga de Datos</h4>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-2_20367fc0e67d67461d67ce86e974e9a3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mzn_censo <span class="ot">=</span> <span class="fu">readOGR</span>(<span class="st">"./Datos/09_ciudaddemexico/conjunto_de_datos/09m.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>OGR data source with driver: ESRI Shapefile 
@@ -151,7 +151,7 @@ It has 8 fields</code></pre>
 </section>
 <section id="análisis-de-los-datos" class="level4">
 <h4 class="anchored" data-anchor-id="análisis-de-los-datos">Análisis de los datos</h4>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-3_ce1bdcbbe3f13b235fe5ec4057eec9f3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mzn_censo<span class="sc">@</span>data <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
@@ -241,7 +241,7 @@ It has 8 fields</code></pre>
 
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-4_f72bfc1a99467b2576ba8d943f18ecdd">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mzn_censo<span class="sc">@</span>proj4string</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Coordinate Reference System:
@@ -289,7 +289,7 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
                 ID["EPSG",9001]]]] </code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-5_5ca395449bca16faade7c6f4fff49c8b">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mzn_censo<span class="sc">@</span>polygons[[<span class="dv">2</span>]]<span class="sc">@</span>Polygons[[<span class="dv">1</span>]]<span class="sc">@</span>coords <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]     [,2]
@@ -302,7 +302,7 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 </div>
 </div>
 <p>Los datos se enuentran en cooordenadas un sistema de coordenadas proyectadas</p>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-6_c53f96bceb47e0b4bb59163f35caecc9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mzn_censo, <span class="at">main=</span><span class="st">"Colonias CDMX"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Tarea2_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
@@ -311,7 +311,7 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 <ul>
 <li>Lo cambiamos a Latitud y Longitud</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-7_229aa8c89618860212d3374e34ef9ff8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(mzn_censo))</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>manzanas <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">mzn=</span> <span class="fu">numeric</span>(),<span class="at">lon=</span> <span class="fu">numeric</span>(),<span class="at">lat=</span> <span class="fu">numeric</span>())</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -341,10 +341,68 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 </section>
 <section id="cálculo-del-centroide" class="level4">
 <h4 class="anchored" data-anchor-id="cálculo-del-centroide">Cálculo del centroide</h4>
-<div class="cell">
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-8_fa7a3293cbdb27a19d5c5d75e5ac10d2">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>centroide <span class="ot">&lt;-</span> manzanas <span class="sc">%&gt;%</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mzn) <span class="sc">%&gt;%</span> </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">c_lon=</span><span class="fu">mean</span>(lon), <span class="at">c_lat=</span><span class="fu">mean</span>(lat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>-Añadimos clave de la manzana</p>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-9_f097a0af5eda04c403d587107938152d">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>clave_mzn <span class="ot">&lt;-</span> mzn_censo<span class="sc">@</span>data <span class="sc">%&gt;%</span> <span class="fu">select</span>(CVE_MZA)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>centroide <span class="ot">&lt;-</span> centroide <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(clave_mzn)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(centroide) <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">mzn</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">c_lon</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">c_lat</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">CVE_MZA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-99.23021</td>
+<td style="text-align: right;">19.35925</td>
+<td style="text-align: left;">031</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">-99.21853</td>
+<td style="text-align: right;">19.36545</td>
+<td style="text-align: left;">024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">-99.24615</td>
+<td style="text-align: right;">19.37789</td>
+<td style="text-align: left;">068</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-99.22448</td>
+<td style="text-align: right;">19.34755</td>
+<td style="text-align: left;">024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">-99.21162</td>
+<td style="text-align: right;">19.36945</td>
+<td style="text-align: left;">004</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">-99.25178</td>
+<td style="text-align: right;">19.36845</td>
+<td style="text-align: left;">031</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
 </div>
 </section>
 </section>
@@ -352,8 +410,8 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 <h2 class="anchored" data-anchor-id="encuentra-la-ubicación-de-todos-los-oxxo-de-la-cdmx-asegúrate-de-filtrar-correctamente-los-datos-para-evitar-falsos-positivos.">2. Encuentra la ubicación de todos los OXXO de la CDMX, asegúrate de filtrar correctamente los datos para evitar falsos positivos.</h2>
 <section id="carga-de-datos-1" class="level4">
 <h4 class="anchored" data-anchor-id="carga-de-datos-1">Carga de Datos</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'./Datos/denue_09_1120_csv/denue_09_csv/conjunto_de_datos/denue_inegi_09_.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-10_685f454360a2f8588dc7169cb0d0f09f">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'./Datos/denue_09_1120_csv/denue_09_csv/conjunto_de_datos/denue_inegi_09_.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="limpieza-de-datos" class="level4">
@@ -361,11 +419,11 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 <ul>
 <li>Primero filtramos todos aquellos que puedan ser un OXXO pero tengan otra razón social</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="sc">%&gt;%</span> <span class="fu">select</span>(nom_estab, raz_social, latitud, longitud) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(nom_estab, <span class="fu">regex</span>(<span class="st">"oxxo"</span>, <span class="at">ignore_case =</span> <span class="cn">TRUE</span>)) <span class="sc">|</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_detect</span>(nom_estab, <span class="fu">regex</span>(<span class="st">"oxo"</span>, <span class="at">ignore_case =</span> <span class="cn">TRUE</span>)) ) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(raz_social<span class="sc">!=</span><span class="st">"CADENA COMERCIAL OXXO SA DE CV"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-11_1be5634f72d9380c7162d1943c43e592">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="sc">%&gt;%</span> <span class="fu">select</span>(nom_estab, raz_social, latitud, longitud) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(nom_estab, <span class="fu">regex</span>(<span class="st">"oxxo"</span>, <span class="at">ignore_case =</span> <span class="cn">TRUE</span>)) <span class="sc">|</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_detect</span>(nom_estab, <span class="fu">regex</span>(<span class="st">"oxo"</span>, <span class="at">ignore_case =</span> <span class="cn">TRUE</span>)) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(raz_social<span class="sc">!=</span><span class="st">"CADENA COMERCIAL OXXO SA DE CV"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
@@ -426,57 +484,59 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 <ul>
 <li>Con lo cual los datos quedarían como:</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="ot">&lt;-</span> datos_denue <span class="sc">%&gt;%</span> <span class="fu">select</span>(nom_estab, raz_social, latitud, longitud) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nom_estab <span class="sc">==</span> <span class="st">"CADENA COMERCIAL OXXO"</span> <span class="sc">|</span> raz_social<span class="sc">==</span><span class="st">"CADENA COMERCIAL OXXO SA DE CV"</span>) </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="sc">%&gt;%</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-12_29087bf18f92f93f81f658c6c9a81656">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="ot">&lt;-</span> datos_denue <span class="sc">%&gt;%</span> <span class="fu">select</span>(id, nom_estab, raz_social, latitud, longitud, manzana) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nom_estab <span class="sc">==</span> <span class="st">"CADENA COMERCIAL OXXO"</span> <span class="sc">|</span> raz_social<span class="sc">==</span><span class="st">"CADENA COMERCIAL OXXO SA DE CV"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, latitud, longitud, manzana)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>datos_denue <span class="sc">%&gt;%</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>() <span class="sc">%&gt;%</span> <span class="fu">kable_paper</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">nom_estab</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">raz_social</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">id</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">latitud</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">longitud</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">manzana</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">50CSI RELACIONES EXTERIORES MEX</td>
-<td style="text-align: left;">CADENA COMERCIAL OXXO SA DE CV</td>
+<td style="text-align: right;">6322823</td>
 <td style="text-align: right;">19.44847</td>
 <td style="text-align: right;">-99.13852</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">50EBG OBREGON INSURGENTES MEX</td>
-<td style="text-align: left;">CADENA COMERCIAL OXXO SA DE CV</td>
+<td style="text-align: right;">6322871</td>
 <td style="text-align: right;">19.41737</td>
 <td style="text-align: right;">-99.16489</td>
+<td style="text-align: right;">11</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">50IDX METRO INDIOS VERDES MEX</td>
-<td style="text-align: left;">CADENA COMERCIAL OXXO SA DE CV</td>
+<td style="text-align: right;">6305767</td>
 <td style="text-align: right;">19.49862</td>
 <td style="text-align: right;">-99.11795</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">50KKP SATURNO ZCL</td>
-<td style="text-align: left;">CADENA COMERCIAL OXXO SA DE CV</td>
+<td style="text-align: right;">6308525</td>
 <td style="text-align: right;">19.38593</td>
 <td style="text-align: right;">-99.11723</td>
+<td style="text-align: right;">3</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">50OEJ OTHON DE MENDIZABAL MEX</td>
-<td style="text-align: left;">CADENA COMERCIAL OXXO SA DE CV</td>
+<td style="text-align: right;">6305777</td>
 <td style="text-align: right;">19.50325</td>
 <td style="text-align: right;">-99.15666</td>
+<td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">50TGM-LAGUNA DE TERMINOS MEX</td>
-<td style="text-align: left;">CADENA COMERCIAL OXXO SA DE CV</td>
+<td style="text-align: right;">6305903</td>
 <td style="text-align: right;">19.44240</td>
 <td style="text-align: right;">-99.17432</td>
+<td style="text-align: right;">7</td>
 </tr>
 </tbody>
 </table>
@@ -488,40 +548,131 @@ PROJCRS["MEXICO_ITRF_2008_LCC",
 </section>
 <section id="determina-cuál-es-oxxo-más-cercano-al-centroide-de-cada-manzana-de-la-cdmx." class="level2">
 <h2 class="anchored" data-anchor-id="determina-cuál-es-oxxo-más-cercano-al-centroide-de-cada-manzana-de-la-cdmx.">3. Determina cuál es OXXO más cercano al Centroide de cada manzana de la CDMX.</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (x <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) {</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Primero hacemos una prueba</li>
+</ul>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-13_79162d43dc7e12e434eeb424bfff0345">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distHaversine</span>(<span class="fu">c</span>(datos_denue[[<span class="dv">1</span>,<span class="dv">3</span>]],datos_denue[[<span class="dv">1</span>,<span class="dv">2</span>]]),<span class="fu">c</span>(centroide[[<span class="dv">1</span>,<span class="dv">2</span>]],centroide[[<span class="dv">1</span>,<span class="dv">3</span>]]),<span class="at">r=</span><span class="dv">6378137</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1
-[1] 2
-[1] 3
-[1] 4
-[1] 5
-[1] 6
-[1] 7
-[1] 8
-[1] 9
-[1] 10</code></pre>
+<pre><code>[1] 13832.86</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>D[<span class="dv">1</span>,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 66789</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>D[<span class="dv">1</span>,<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -99.10789</code></pre>
-</div>
+<ul>
+<li>Posteriormente hacemos un ciclo FOR</li>
+</ul>
+<p>OJO hubo que detener este código despés de tres días de estarlo corriendo</p>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-14_52fa8fa9dadd196a98312127bd3d8572">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># n = seq(1,nrow(datos_denue))</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># distancias &lt;- tibble(mzn= numeric(),c_lon= numeric(), c_lat= numeric(), CVE_MZA=character(), </span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      oxxo=integer(), id=integer(), latitud= numeric(), longitud= numeric(), manzana=integer(), </span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      distancia=numeric())</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in m) {</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   for (j in n) {</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     d &lt;- distHaversine(c(datos_denue[[j,3]],datos_denue[[j,2]]),c(centroide[[i,2]],centroide[[i,3]]),r=6378137)</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     D &lt;- data.frame(slice(centroide, i), j, slice(datos_denue,j), d)</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     distancias &lt;- distancias %&gt;% rbind(tibble(D))</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   }</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   </span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"./Datos/distancias_miau.csv"</span>,<span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="determina-cuál-es-el-oxxo-que-es-más-cercano-a-más-manzanas-de-la-cdmx." class="level2">
 <h2 class="anchored" data-anchor-id="determina-cuál-es-el-oxxo-que-es-más-cercano-a-más-manzanas-de-la-cdmx.">4. Determina cuál es el OXXO que es más cercano a más manzanas de la CDMX.</h2>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-15_91ccec668c02bd7b4604a2cd6f6f0eef">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>distancias <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(j) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">dist_tot =</span> <span class="fu">sum</span>(d)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dist_tot) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+      j dist_tot
+  &lt;dbl&gt;    &lt;dbl&gt;
+1   352 4379875.
+2  1184 4491465.
+3   814 4580638.
+4   647 4610756.
+5   627 4646237.
+6   176 4679610.</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-16_7047aef9693301aa6322d17dcc654ca0">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>distancias <span class="sc">%&gt;%</span> <span class="fu">filter</span>(j<span class="sc">==</span><span class="dv">352</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,491 × 10
+     mzn c_lon c_lat CVE_MZA     j      id latitud longitud manzana     d
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1     1 -99.2  19.4 031       352 6323906    19.4    -99.2       3 1311.
+ 2     2 -99.2  19.4 024       352 6323906    19.4    -99.2       3  584.
+ 3     3 -99.2  19.4 068       352 6323906    19.4    -99.2       3 2650.
+ 4     4 -99.2  19.3 024       352 6323906    19.4    -99.2       3 2368.
+ 5     5 -99.2  19.4 004       352 6323906    19.4    -99.2       3 1182.
+ 6     6 -99.3  19.4 031       352 6323906    19.4    -99.2       3 3039.
+ 7     7 -99.3  19.4 023       352 6323906    19.4    -99.2       3 3190.
+ 8     8 -99.3  19.4 022       352 6323906    19.4    -99.2       3 3148.
+ 9     9 -99.2  19.4 007       352 6323906    19.4    -99.2       3 1634.
+10    10 -99.3  19.4 018       352 6323906    19.4    -99.2       3 3700.
+# ℹ 1,481 more rows</code></pre>
+</div>
+</div>
 </section>
 <section id="cuál-es-la-distancia-euclidiana-entre-el-oxxo-del-punto-4-y-este-en-la-paz" class="level2">
 <h2 class="anchored" data-anchor-id="cuál-es-la-distancia-euclidiana-entre-el-oxxo-del-punto-4-y-este-en-la-paz">5. ¿Cuál es la distancia euclidiana entre el OXXO del punto 4 y este en la Paz?</h2>
+<ul>
+<li>Primero pasamos las coordenadas a UTM</li>
+</ul>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-17_b971533200f2e3938abf881b72faa0f6">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convertimos a coordenadas espaciales</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>mydf <span class="ot">&lt;-</span> <span class="fu">structure</span>(<span class="fu">list</span>(<span class="at">longitude =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">99.22285</span>, <span class="sc">-</span><span class="fl">110.3136462</span>), <span class="at">latitude =</span> <span class="fu">c</span>(<span class="fl">19.36876</span>, <span class="fl">24.1421659</span>)), </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">.Names =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">class =</span> <span class="st">"data.frame"</span>, <span class="at">row.names =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="sc">-</span>2L))</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> mydf[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>spdf <span class="ot">&lt;-</span> <span class="fu">SpatialPointsDataFrame</span>(<span class="at">coords =</span> xy, <span class="at">data =</span> mydf,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">proj4string =</span> <span class="fu">CRS</span>(<span class="st">"+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"</span>))</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizamos las coordenadas geograficas y las proyectamos</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lon=</span>spdf<span class="sc">$</span>longitude, <span class="at">lat=</span>spdf<span class="sc">$</span>latitude)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(d) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Estan en lat,lon entonces declaramos la proyeccion usual</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>sputm <span class="ot">&lt;-</span> <span class="fu">SpatialPoints</span>(d, <span class="at">proj4string=</span><span class="fu">CRS</span>(<span class="st">"+proj=longlat +datum=WGS84"</span>))</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Ya sabemos que todos los puntos estan en la CDMX y por lo tanto, pertenecen a la UTM Zone 14</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>proyeccion<span class="ot">&lt;-</span><span class="fu">CRS</span>(<span class="st">"+proj=utm +zone=14 +datum=WGS84 +units=m +no_defs "</span>) </span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformamos los datos</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>UTM <span class="ot">&lt;-</span> <span class="fu">spTransform</span>(sputm, proyeccion) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>()</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(UTM) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lon_UTM"</span>,<span class="st">"lat_UTM"</span>)</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>pto1 <span class="ot">&lt;-</span> <span class="fu">c</span>(UTM<span class="sc">$</span>lon_UTM[<span class="dv">1</span>],UTM<span class="sc">$</span>lat_UTM[<span class="dv">1</span>])</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>pto2 <span class="ot">&lt;-</span> <span class="fu">c</span>(UTM<span class="sc">$</span>lon_UTM[<span class="dv">2</span>],UTM<span class="sc">$</span>lat_UTM[<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Calculamos distancia euclidiana</li>
+</ul>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-18_9811b6868530aff016a8f9f64227d112">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Formula</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>euclidean <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) <span class="fu">sqrt</span>(<span class="fu">sum</span>((a <span class="sc">-</span> b)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">euclidean</span>(pto1,pto2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1268998</code></pre>
+</div>
+</div>
 </section>
 <section id="cuál-es-la-distancia-de-haversine-entre-el-oxxo-del-punto-4-y-este-en-la-paz" class="level2">
 <h2 class="anchored" data-anchor-id="cuál-es-la-distancia-de-haversine-entre-el-oxxo-del-punto-4-y-este-en-la-paz">6. ¿Cuál es la distancia de Haversine entre el OXXO del punto 4 y este en la Paz?</h2>
+<div class="cell" data-hash="Tarea2_cache/html/unnamed-chunk-19_e959b8a37600be6d08daf903012af2ca">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distHaversine</span>(<span class="fu">c</span>(spdf<span class="sc">$</span>longitude[<span class="dv">1</span>],spdf<span class="sc">$</span>latitude[<span class="dv">1</span>]), <span class="fu">c</span>(spdf<span class="sc">$</span>longitude[<span class="dv">2</span>],spdf<span class="sc">$</span>latitude[<span class="dv">2</span>]), <span class="at">r=</span><span class="dv">6378137</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1263152</code></pre>
+</div>
+</div>
 <p>Escribe una rutina de R para cada pregunta. Mantén el orden en tu código y comenta todo.</p>
 <p>Colócalo en el Folder de equipo a más tardar, <strong>miércoles 31 de febrero 11 am.</strong></p>
 <section id="puntuación-extra" class="level3">
