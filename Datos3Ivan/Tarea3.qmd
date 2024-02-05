@@ -1,0 +1,357 @@
+---
+title: "Tarea 3"
+author: "Iván y Sara Luz"
+format: pdf
+editor: visual
+execute:
+  cache: true
+---
+
+Imagina que vas colocas una cámara en cada **escuela.csv** y quieres responder algunas preguntas respecto a los delitos que ocurren en la CDMX **da_carpetas-de-investigacion-pgj-cdmx (1).csv**.
+
+Arma una función de R por cada pregunta y explica tus respuestas en un pdf. Colócalo en tu folder de equipo con fecha límite **martes 6 de febrero 10 am**.
+
+De forma general, considera que “**un delito es observado si está a menos de 100 metros de una cámara**”
+
+# Carga de Datos y Bibliotecas
+
+El presente ejercicio difiere un poco del presentado originalmente en virtud de que la base de investigaciones se subsegmento. La subsegmentación a la base de investigaciones tiene que ver con que se aplicaron filtros a las investigaciones. Se aplicó filtro a para eliminar los delitos anteriores a 2018. El marco legal se modifica constantemente y en ese sentido, lo que antes era delito puede ya no serlo en la actualidad. Desde 2012, ha habido 12 cambios al Código Penal de la Ciudad de México.Además se hace una segmentación entre delitos que sí pueden ser observados en cámara y aquellos que no pueden ser observados. Esta segmentación podría no ser exacta. Se eliminaron algunos delitos como Aborto,
+
+#### Carga de Bibliotecas
+
+```{r message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(rgdal)
+library(leaflet)
+library(readxl)
+library(readr)
+library(RCurl)
+library(foreign)
+library(geosphere)
+library(sp)
+library(kableExtra)
+```
+
+Cargamos las bases de datos, en este caso la Carpeta de datos de delitos y la de escuelas que son similes de las cámaras.
+
+```{r message=FALSE}
+investigaciones <- read_csv("da_carpetas-de-investigacion-pgj-cdmx (1).csv")
+escuelas <- read.csv("escuelas.csv", encoding="UTF-8", comment.char="#")
+head(investigaciones)
+head(escuelas)
+```
+
+# Limpieza de Datos
+
+* Eliminamos valores que sean cero. solo nos quedamos con registros validos:
+```{r}
+investigaciones1 <- filter(investigaciones,latitud != 0 & longitud != 0) %>% filter(!is.na(latitud) | !is.na(longitud) )
+escuelas1 <- escuelas %>% filter(latitud != 0 | longitud != 0 ) %>% filter(!is.na(latitud) | !is.na(longitud) )
+```
+
+* Convertimos ao_hechos de caracter a factor 
+```{r}
+investigaciones1$ao_hechos <- as.factor(investigaciones1$ao_hechos)
+```
+
+* Se crea un grafico con los delitos por año
+```{r}
+ggplot(investigaciones1, aes(x = ao_hechos)) + 
+  geom_bar() + 
+  theme_minimal() + 
+  labs(title = "Delitos por año", x = "Años", y = "Delitos") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+* Revisando la base observamos que hay valores de años muy viejos, se acorta la base a que los delitos hayan pasado despues de 2017 
+```{r}
+investigaciones1 <- investigaciones1 %>% filter( ao_hechos == '2017' | ao_hechos == '2018' | ao_hechos == '2019') %>% select(ao_hechos, mes_hechos, longitud, latitud, delito)
+```
+
+* Creamos la variable fecha que es una unión de año con mes 
+```{r}
+investigaciones1$fecha <- paste0(investigaciones1$ao_hechos, investigaciones1$mes_hechos)
+```
+
+* Convertimos fecha de caracter a factor 
+```{r}
+investigaciones1$fecha <- as.factor(investigaciones1$fecha)
+```
+
+* Convertimos delito de caracter a factor 
+```{r}
+investigaciones1$delito <- as.factor(investigaciones1$delito)
+```
+
+* Filtramos los delitos que consideramos reelevantes
+```{r}
+# El siguiente cigo es para ver el tipo de delito
+#levels(investigaciones1$delito)
+
+#Filtro de los delitos de interés
+investigaciones1$delitoxcamara <- ifelse(investigaciones1$delito %in% c("ULTRAJES","TRATA DE PERSONAS","TORTURA","SUSTRACCION DE MENORES","ROBO DE VEHICULO DE SERVICIO PARTICULAR CON VIOLENCIA","ROBO DE ACCESORIOS DE AUTO","ROBO DE MOTOCICLETA CON VIOLENCIA","ROBO DE ALHAJAS","ROBO A TRANSEUNTE DE CELULAR CON VIOLENCIA","ROBO A PASAJERO A BORDO DE TRANSPORTE PÚBLICO CON VIOLENCIA","ROBO A PASAJERO / CONDUCTOR DE TAXI CON VIOLENCIA","ROBO A NEGOCIO CON VIOLENCIA","ROBO A CASA HABITACION CON VIOLENCIA","PLAGIO O SECUESTRO","NARCOMENUDEO POSESIÓN CON FINES DE VENTA, COMERCIO Y SUMINISTRO","LESIONES INTENCIONALES" ,"LESIONES CULPOSAS","HOMICIDIO POR ARMA DE FUEGO","HOMICIDIO POR AHORCAMIENTO","HOMICIDIO CULPOSO POR ARMA DE FUEGO","FRAUDE","FEMINICIDIO","EXTORSION","DESAPARICION FORZADA DE PERSONAS","DELITOS ELECTORALES","DELITOS CONTRA LA SALUD","DELITOS AMBIENTALES","CONTAMINACIÓN O RESIDUOS","ABUSO SEXUAL","ACOSO SEXUAL","VIOLACION","ACOSO SEXUAL","VIOLACION EQUIPARADA","VIOLACION TUMULTUARIA"), 1, 0) 
+
+# Filtro para ver al menos 1 delito
+investigaciones1 <- filter(investigaciones1, delitoxcamara != 0)
+```
+
+
+```{r}
+# Seleccionamos las columnas relevantes
+escuelas1 <- escuelas1 %>% select(id, nom_estab, latitud, longitud)
+```
+
+* Cremos las variables de totales para iterar
+
+```{r}
+tot_delitos = nrow(investigaciones1)
+tot_escuelas = nrow(escuelas1)
+```
+
+* Convertimos a UTM
+```{r}
+#Todos los puntos de la CDMX están en UTM zone 14
+d_delitos <- data.frame(lon=investigaciones1$longitud, lat=investigaciones1$latitud)
+d_escuelas <- data.frame(lon=escuelas1$longitud, lat=escuelas1$latitud)
+
+coordinates(d_delitos) <- c("lon", "lat")
+coordinates(d_escuelas) <- c("lon", "lat")
+
+#Estan en lat,lon entonces declaramos la proyeccion usual
+sputm_delitos <- SpatialPoints(d_delitos, proj4string=CRS("+proj=longlat +datum=WGS84"))
+sputm_escuelas <- SpatialPoints(d_escuelas, proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+#Todos los puntos viven en la CDMX
+proyeccion<-CRS("+proj=utm +zone=14 +datum=WGS84 +units=m +no_defs ") 
+
+#Transformamos los datos
+spgeo_delitos <- spTransform(sputm_delitos, proyeccion)
+spgeo_escuelas <- spTransform(sputm_escuelas, proyeccion)
+
+spgeo_delitos<-as.data.frame(spgeo_delitos)
+spgeo_escuelas<-as.data.frame(spgeo_escuelas)
+
+#Tenemos un equivalente como "lat,lon" en coordendas en el plano cartesiano
+colnames(spgeo_delitos) <- c("lon_UTM","lat_UTM")
+colnames(spgeo_escuelas) <- c("lon_UTM","lat_UTM")
+```
+
+* Función de la distancia euclideana
+```{r}
+#Cargamos la distancia euclidiana
+euclidean <- function(a, b) sqrt(sum((a - b)^2))
+```
+
+
+# 1. ¿Cuántos delitos son observados por, al menos una cámara?
+
+```{r}
+a <- now() 
+
+total3 <- c()#auxiliar para guardar
+for(i in 1:tot_escuelas){
+  aux <- 0#Contador de delitos dentro del buffer
+  
+  #Delitos dentro del cuadrado, con base en el valor absoluto
+  vec1 <- which( abs(spgeo_escuelas$lat_UTM[i] - spgeo_delitos$lat_UTM) < 100)
+  vec2 <- which( abs(spgeo_escuelas$lon_UTM[i] - spgeo_delitos$lon_UTM) < 100)
+  
+  #Si estan en ambos indices, implica que estan dentro del cuadrado de lado r y centro en c(spgeo_escuela$lat_UTM[i],spgeo_escuela$lon_UTM[i])
+  vec <- intersect(vec1,vec2)
+  
+  #Ahora necesito descartar aquellos que están fuera del círculo de radio r y centro en c(spgeo$lat_UTM[i],spgeo$lon_UTM[i])
+  if(length(vec) > 0){ #Solo verificamos que hay, al menos, un punto dentro del cuadrado
+    for(j in 1:length(vec)){
+      if( (distHaversine(c(investigaciones1$longitud[vec[j]],investigaciones1$latitud[vec[j]]),c(escuelas1$longitud[i],escuelas1$latitud[i]), r=6378137) < 100) ){
+        aux <- aux + 1 #Confirmamos un delito dentro del circulo
+#        print(i)
+#        print(j)
+      }
+    }
+  }
+  #Acumulamos el numero de delitos en el buffer de cada uno
+  total3 <- rbind(total3,aux)
+#  print(i)
+}
+
+now() - a 
+```
+
+```{r}
+delitos_obs <- tibble(delitos_obs = total3, escuelas1) 
+delitos_obs %>% summarise(delitos_obs_por_cam_esc = sum(delitos_obs))
+```
+
+**3140 delitos son observados con las cámaras colocadas en las escuelas**
+
+
+# 2. ¿Cuántas cámaras observan, al menos un delito?
+
+```{r}
+delitos_obs %>% filter(delitos_obs > 0) %>% summarise(camaras_obs_1oMas_delitos = n())
+```
+
+**333 de las 365 cámaras colocadas en las escuelas observan al menos un delito**
+
+# 3. ¿Cuál es la cámara que observa más delitos?
+
+```{r}
+delitos_obs %>% summarise(camaras_obs_mas_delitos = max(delitos_obs))
+```
+
+```{r}
+delitos_obs %>% filter(delitos_obs==75)
+```
+
+# 4. ¿Cuántos delitos no son observados por, al menos una cámara?
+
+```{r}
+tot_delitos - 3140
+```
+
+**110,831 delitos de los 113,971, no son observados por una cámara en las escuelas**
+
+# 5. Si pudieras colocar 10 cámaras nuevas, ¿en dónde las colocarías? Explica tu razonamiento y la ubicación de tus cámaras en latitud, longitud.
+
+**Primera Propuesta** Colocar las cámaras en proporción a los delitos per cápita por manzana
+
+* Tomamos los datos de centroide de la clase pasada
+```{r}
+centroide = read_csv("./centroides_mzn_cdmx.csv",show_col_types = FALSE)
+head(centroide)
+```
+
+* Convertimos a UTM
+```{r}
+#Todos los puntos de la CDMX están en UTM zone 14
+d_mnz <- data.frame(lon=centroide$c_lon, lat=centroide$c_lat)
+
+coordinates(d_mnz) <- c("lon", "lat")
+
+#Estan en lat,lon entonces declaramos la proyeccion usual
+sputm_mnz <- SpatialPoints(d_mnz, proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+#Todos los puntos viven en la CDMX
+proyeccion<-CRS("+proj=utm +zone=14 +datum=WGS84 +units=m +no_defs ") 
+
+#Transformamos los datos
+spgeo_mnz <- spTransform(sputm_mnz, proyeccion)
+
+spgeo_mnz<-as.data.frame(spgeo_mnz)
+
+#Tenemos un equivalente como "lat,lon" en coordendas en el plano cartesiano
+colnames(spgeo_mnz) <- c("lon_UTM","lat_UTM")
+```
+
+```{r}
+tot_mnz = nrow(centroide)
+```
+
+
+* Medimos número de delitos en un radio de 1000 m (*Dimos 1km por dar un número pero no sabemos si haya un radio promedio de manzana*)
+
+```{r cache=TRUE}
+a <- now() 
+
+total4 <- c()#auxiliar para guardar
+for(i in 1:tot_mnz){
+  aux <- 0#Contador de delitos dentro del buffer
+  
+  #Delitos dentro del cuadrado, con base en el valor absoluto
+  vec1 <- which( abs(spgeo_mnz$lat_UTM[i] - spgeo_delitos$lat_UTM) < 1000)
+  vec2 <- which( abs(spgeo_mnz$lon_UTM[i] - spgeo_delitos$lon_UTM) < 1000)
+  
+  #Si estan en ambos indices, implica que estan dentro del cuadrado de lado r y centro en c(spgeo_escuela$lat_UTM[i],spgeo_escuela$lon_UTM[i])
+  vec <- intersect(vec1,vec2)
+  
+  #Ahora necesito descartar aquellos que están fuera del círculo de radio r y centro en c(spgeo$lat_UTM[i],spgeo$lon_UTM[i])
+  if(length(vec) > 0){ #Solo verificamos que hay, al menos, un punto dentro del cuadrado
+    for(j in 1:length(vec)){
+      if( (distHaversine(c(investigaciones1$longitud[vec[j]],investigaciones1$latitud[vec[j]]),c(centroide$c_lon[i],centroide$c_lat[i]), r=6378137) < 1000) ){
+        aux <- aux + 1 #Confirmamos un delito dentro del circulo
+#        print(i)
+#        print(j)
+      }
+    }
+  }
+  #Acumulamos el numero de delitos en el buffer de cada uno
+  total4 <- rbind(total4,aux)
+#  print(i)
+}
+
+now() - a 
+```
+
+* Letura del archivo con microdatos
+
+```{r}
+datos_mnz <- read.csv("RESAGEBURB_09CSV20.csv") %>% tibble() %>% select(ENTIDAD, MUN, LOC, AGEB, MZA, POBTOT, NOM_MUN)
+glimpse(datos_mnz)
+
+#ENTIDAD (2) + MUNICIPIO (3) + LOCALIDAD (4) + AGEB (4) + MANZANA (3)
+```
+
+```{r}
+datos_mnz <- datos_mnz %>% mutate(AGEB_completo = paste(sprintf("%02d", ENTIDAD),  
+                                           sprintf("%03d", MUN),  
+                                           sprintf("%04d", LOC),  
+                                           sprintf("%04s", AGEB),  
+                                           sprintf("%03d", MZA)     , sep = "")) %>% 
+  select(AGEB_completo, POBTOT, NOM_MUN)
+n_distinct(datos_mnz$AGEB_completo)
+```
+El número no coincide con las manzanas
+
+* Revisamos el DBF
+
+```{r}
+Sys.setlocale('LC_ALL','C')
+datos_centroides = read.dbf("09m.dbf") %>% mutate_if(is.character, utf8::utf8_encode) %>% data.frame()
+glimpse(datos_centroides)
+```
+
+```{r}
+#ENTIDAD (2) + MUNICIPIO (3) + LOCALIDAD (4) + AGEB (4) + MANZANA (3)
+datos_centroides <- datos_centroides %>% mutate(AGEB_completo = paste(CVE_ENT,
+                                                  CVE_MUN,
+                                                  CVE_LOC, 
+                                                  CVE_AGEB,
+                                                  CVE_MZA, sep = ""))
+n_distinct(datos_centroides$AGEB_completo)
+```
+
+Vamos a usar estos últimos para hacer el match con los de los microdatos
+
+```{r}
+centroide <- centroide%>% add_column(AGEB_completo = datos_centroides$AGEB_completo, delitos = total4)
+```
+
+Hacemos el JOIN
+
+```{r}
+df2 <- merge(x=centroide, y=datos_mnz, 
+             by="AGEB_completo", all.x=TRUE)
+df3 <- df2 %>%  filter(POBTOT != 0 ) %>%  #Para no dividir entre cero
+  mutate(delitos_per_capita = delitos/POBTOT)
+```
+
+```{r}
+df3 %>% arrange(desc(delitos_per_capita)) %>% head(10)
+```
+
+No tiene sentido hacerlo por AGEB, vamos a agrupar por CVE_MZA
+
+```{r}
+df4 <- df2 %>% filter(POBTOT != 0 ) %>% 
+  group_by(NOM_MUN, CVE_MZA) %>% 
+  summarise(pob_total_mz = sum(POBTOT), delitos_tot = sum(delitos), latitud = round(mean(c_lat),5), longitud = round(mean(c_lon),5)) %>% 
+  mutate(delitos_per_capita_mz = round(delitos_tot / pob_total_mz,1), coord = paste(latitud,",",longitud, sep = "") )%>% 
+  arrange(desc(delitos_per_capita_mz)) %>% 
+  head(10)
+df4
+```
+
+**Se sugiere colocar esas 10 cámaras en las manzanas mostradas arriba, con más tiempo se recomienda probar para diferentes radios, ya que la población total, sigue muy chica**
+
+

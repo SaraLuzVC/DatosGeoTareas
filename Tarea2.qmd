@@ -1,7 +1,7 @@
 ---
 title: "Tarea 2"
 author: "Sara Luz e Iván"
-format: html
+format: pdf
 editor: visual
 execute:
   cache: true
@@ -103,6 +103,7 @@ centroide <- manzanas %>%
 ```
 
 -Añadimos clave de la manzana
+
 ```{r}
 clave_mzn <- mzn_censo@data %>% select(CVE_MZA)
 centroide <- centroide %>% add_column(clave_mzn)
@@ -145,14 +146,17 @@ datos_denue %>%
 
 ## 3. Determina cuál es OXXO más cercano al Centroide de cada manzana de la CDMX.
 
-- Primero hacemos una prueba
+-   Primero hacemos una prueba
+
 ```{r}
 distHaversine(c(datos_denue[[1,3]],datos_denue[[1,2]]),c(centroide[[1,2]],centroide[[1,3]]),r=6378137)
 ```
 
-- Posteriormente hacemos un ciclo FOR
+-   Posteriormente hacemos un ciclo FOR
 
 OJO hubo que detener este código despés de tres días de estarlo corriendo
+
+**Probar haciendolo por colonia**
 
 ```{r cache=TRUE}
 # n = seq(1,nrow(datos_denue))
@@ -173,8 +177,6 @@ OJO hubo que detener este código despés de tres días de estarlo corriendo
 distancias = read_csv("./Datos/distancias_miau.csv",show_col_types = FALSE)
 ```
 
-
-
 ## 4. Determina cuál es el OXXO que es más cercano a más manzanas de la CDMX.
 
 ```{r}
@@ -188,10 +190,11 @@ distancias %>% group_by(j) %>%
 distancias %>% filter(j==352)
 ```
 
-
 ## 5. ¿Cuál es la distancia euclidiana entre el OXXO del punto 4 y este en la Paz?
 
-- Primero pasamos las coordenadas a UTM
+-   Primero pasamos las coordenadas a UTM
+
+**OJO SON 2 UTMS**
 
 ```{r}
 # convertimos a coordenadas espaciales
@@ -222,7 +225,7 @@ pto1 <- c(UTM$lon_UTM[1],UTM$lat_UTM[1])
 pto2 <- c(UTM$lon_UTM[2],UTM$lat_UTM[2])
 ```
 
-- Calculamos distancia euclidiana
+-   Calculamos distancia euclidiana
 
 ```{r}
 #Formula
@@ -231,13 +234,11 @@ euclidean <- function(a, b) sqrt(sum((a - b)^2))
 euclidean(pto1,pto2)
 ```
 
-
 ## 6. ¿Cuál es la distancia de Haversine entre el OXXO del punto 4 y este en la Paz?
 
 ```{r}
 distHaversine(c(spdf$longitude[1],spdf$latitude[1]), c(spdf$longitude[2],spdf$latitude[2]), r=6378137)
 ```
-
 
 Escribe una rutina de R para cada pregunta. Mantén el orden en tu código y comenta todo.
 
